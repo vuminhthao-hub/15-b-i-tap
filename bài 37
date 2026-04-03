@@ -1,0 +1,47 @@
+import customtkinter as ctk
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+app = ctk.CTk()
+app.title("Bài 37 - UCLN & BCNN")
+app.geometry("400x350")
+
+# ===== TITLE =====
+title = ctk.CTkLabel(app, text="TÍNH UCLN & BCNN", font=("Arial",18,"bold"))
+title.pack(pady=15)
+
+# ===== INPUT =====
+e1 = ctk.CTkEntry(app, placeholder_text="Nhập số a")
+e1.pack(pady=8)
+
+e2 = ctk.CTkEntry(app, placeholder_text="Nhập số b")
+e2.pack(pady=8)
+
+# ===== RESULT =====
+kq = ctk.CTkLabel(app, text="", font=("Arial",14))
+kq.pack(pady=15)
+
+# ===== LOGIC =====
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+def solve():
+    try:
+        a = int(e1.get())
+        b = int(e2.get())
+
+        ucln = gcd(a, b)
+        bcnn = abs(a*b) // ucln if ucln != 0 else 0
+
+        kq.configure(text=f"UCLN = {ucln}\nBCNN = {bcnn}")
+    except:
+        kq.configure(text="❌ Lỗi nhập")
+
+# ===== BUTTON =====
+btn = ctk.CTkButton(app, text="TÍNH", command=solve)
+btn.pack(pady=10)
+
+app.mainloop()
