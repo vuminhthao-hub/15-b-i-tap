@@ -1,0 +1,43 @@
+import matplotlib.pyplot as plt
+
+try:
+    # Nhập dữ liệu
+    data = input("Nhap lai suat, tien von, thoi han (vd: 0.027,15000,3): ")
+    parts = data.split(",")
+
+    if len(parts) != 3:
+        raise ValueError("Nhap thieu hoac sai dinh dang!")
+
+    r = float(parts[0].strip())
+    p = float(parts[1].strip())
+    n = int(parts[2].strip())
+
+    if r < 0 or p < 0 or n <= 0:
+        raise ValueError("Gia tri khong hop le!")
+
+    # In bảng
+    print("\nNam\tVon")
+
+    a = p
+    years = []
+    values = []
+
+    for i in range(1, n + 1):
+        a = a * (1 + r)
+        years.append(i)
+        values.append(a)
+        print(f"{i}\t{round(a, 1)}")
+
+    # Vẽ đồ thị
+    plt.figure(figsize=(6,4))
+    plt.plot(years, values, marker='o', color='blue')
+
+    plt.title("Tang truong von theo nam")
+    plt.xlabel("Nam")
+    plt.ylabel("So tien")
+    plt.grid(True)
+
+    plt.show()
+
+except Exception as e:
+    print("Loi:", e)
