@@ -1,0 +1,66 @@
+import tkinter as tk
+
+# ===== HÀM ĐỆ QUY =====
+def max_de_quy(lst, n):
+    if n == 1:
+        return lst[0]
+    return max(lst[n-1], max_de_quy(lst, n-1))
+
+# ===== XỬ LÝ =====
+def xu_ly(event=None):
+    data = entry.get()
+
+    try:
+        lst = list(map(int, data.split()))
+    except:
+        result.config(text="❌ Nhập số cách nhau bằng dấu cách!", fg="red")
+        return
+
+    if len(lst) == 0:
+        result.config(text="❌ Danh sách rỗng!", fg="red")
+        return
+
+    max_val = max_de_quy(lst, len(lst))
+    result.config(text=f"Max = {max_val}", fg="#00ffcc")
+
+    # ===== VẼ BẢNG ĐỒ HỌA =====
+    canvas.delete("all")
+
+    x = 20
+    for num in lst:
+        color = "#ef4444" if num == max_val else "#22c55e"
+
+        # ô vuông
+        canvas.create_rectangle(x, 50, x+50, 100, fill=color, outline="white")
+
+        # số bên trong
+        canvas.create_text(x+25, 75, text=str(num), fill="white", font=("Arial", 12, "bold"))
+
+        x += 60
+
+# ===== GIAO DIỆN =====
+root = tk.Tk()
+root.title("📊 Bài 209 - Max đệ quy")
+root.geometry("520x250")
+root.configure(bg="#020617")
+
+tk.Label(root, text="Nhập dãy số:",
+         fg="white", bg="#020617").pack(pady=5)
+
+entry = tk.Entry(root, width=40)
+entry.pack()
+
+entry.bind("<Return>", xu_ly)
+
+tk.Button(root, text="Tìm Max",
+          bg="#22c55e", fg="white",
+          command=xu_ly).pack(pady=5)
+
+result = tk.Label(root, text="", fg="white", bg="#020617")
+result.pack()
+
+canvas = tk.Canvas(root, width=500, height=120, bg="#020617")
+canvas.pack()
+
+entry.focus()
+root.mainloop()
