@@ -1,0 +1,79 @@
+import tkinter as tk
+
+# ===== TÍNH PARITY =====
+def tinh_parity(event=None):
+    value = entry.get()
+
+    if not value.isdigit():
+        result.config(text="❌ Nhập số hợp lệ!", fg="red")
+        return
+
+    n = int(value)
+    binary = bin(n)[2:]
+    count1 = binary.count("1")
+    parity = 0 if count1 % 2 == 0 else 1
+
+    # hiển thị text
+    result.config(
+        text=f"Nhị phân: {binary}\nSố bit 1: {count1}\n➡ Even parity = {parity}",
+        fg="#00ffcc"
+    )
+
+    # ===== VẼ ĐỒ HỌA =====
+    canvas.delete("all")
+
+    x = 20
+    for bit in binary:
+        color = "#22c55e" if bit == "1" else "#1e293b"
+
+        # ô vuông
+        canvas.create_rectangle(x, 50, x+30, 80, fill=color, outline="white")
+
+        # chữ 0/1
+        canvas.create_text(x+15, 65, text=bit, fill="white")
+
+        x += 40
+
+    # vẽ parity
+    canvas.create_text(200, 120,
+        text=f"Parity = {parity}",
+        fill="#ff66cc", font=("Arial", 12, "bold"))
+
+# ===== GIAO DIỆN =====
+root = tk.Tk()
+root.title("🎮 Bit Parity Visual")
+root.geometry("450x300")
+root.configure(bg="#020617")
+
+# ===== TITLE =====
+tk.Label(root, text="⚡ BIT PARITY VISUAL ⚡",
+         font=("Arial", 15, "bold"),
+         fg="#38bdf8", bg="#020617").pack(pady=10)
+
+# ===== INPUT =====
+frame = tk.Frame(root, bg="#020617")
+frame.pack()
+
+entry = tk.Entry(frame, font=("Arial", 12),
+                 bg="black", fg="white",
+                 insertbackground="white", width=20)
+entry.pack(side=tk.LEFT, padx=5)
+
+entry.bind("<Return>", tinh_parity)
+
+tk.Button(frame, text="Tính",
+          bg="#22c55e", fg="white",
+          command=tinh_parity).pack(side=tk.LEFT)
+
+# ===== RESULT =====
+result = tk.Label(root, text="👉 Kết quả",
+                  fg="#94a3b8", bg="#020617",
+                  font=("Consolas", 11))
+result.pack(pady=10)
+
+# ===== CANVAS ĐỒ HỌA =====
+canvas = tk.Canvas(root, width=420, height=150, bg="#020617", highlightthickness=0)
+canvas.pack()
+
+entry.focus()
+root.mainloop()
