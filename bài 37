@@ -1,25 +1,54 @@
 import customtkinter as ctk
 
 ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
 
 app = ctk.CTk()
-app.title("Bài 37 - UCLN & BCNN")
-app.geometry("400x350")
+app.title("UCLN & BCNN")
+app.geometry("420x400")
+
+# ===== FRAME CHÍNH =====
+frame = ctk.CTkFrame(
+    app,
+    corner_radius=20,
+    fg_color="#1e1e2f"   # màu nền chính
+)
+frame.pack(padx=20, pady=20, fill="both", expand=True)
 
 # ===== TITLE =====
-title = ctk.CTkLabel(app, text="TÍNH UCLN & BCNN", font=("Arial",18,"bold"))
-title.pack(pady=15)
+title = ctk.CTkLabel(
+    frame,
+    text="TÍNH UCLN & BCNN",
+    font=("Arial", 20, "bold"),
+    text_color="#4cc9f0"   # xanh neon
+)
+title.pack(pady=20)
 
 # ===== INPUT =====
-e1 = ctk.CTkEntry(app, placeholder_text="Nhập số a")
-e1.pack(pady=8)
+e1 = ctk.CTkEntry(
+    frame,
+    placeholder_text="Nhập số a",
+    height=45,
+    corner_radius=10,
+    border_color="#4cc9f0"
+)
+e1.pack(pady=10, padx=30, fill="x")
 
-e2 = ctk.CTkEntry(app, placeholder_text="Nhập số b")
-e2.pack(pady=8)
+e2 = ctk.CTkEntry(
+    frame,
+    placeholder_text="Nhập số b",
+    height=45,
+    corner_radius=10,
+    border_color="#4cc9f0"
+)
+e2.pack(pady=10, padx=30, fill="x")
 
 # ===== RESULT =====
-kq = ctk.CTkLabel(app, text="", font=("Arial",14))
+kq = ctk.CTkLabel(
+    frame,
+    text="",
+    font=("Arial", 16),
+    text_color="#f1faee"
+)
 kq.pack(pady=15)
 
 # ===== LOGIC =====
@@ -34,14 +63,29 @@ def solve():
         b = int(e2.get())
 
         ucln = gcd(a, b)
-        bcnn = abs(a*b) // ucln if ucln != 0 else 0
+        bcnn = abs(a * b) // ucln if ucln != 0 else 0
 
-        kq.configure(text=f"UCLN = {ucln}\nBCNN = {bcnn}")
+        kq.configure(
+            text=f"UCLN: {ucln}\nBCNN: {bcnn}",
+            text_color="#80ed99"  # xanh lá khi thành công
+        )
     except:
-        kq.configure(text="❌ Lỗi nhập")
+        kq.configure(
+            text="❌ Nhập sai!",
+            text_color="#ff4d6d"  # đỏ lỗi
+        )
 
 # ===== BUTTON =====
-btn = ctk.CTkButton(app, text="TÍNH", command=solve)
-btn.pack(pady=10)
+btn = ctk.CTkButton(
+    frame,
+    text="TÍNH",
+    height=50,
+    corner_radius=12,
+    fg_color="#4361ee",       # xanh chính
+    hover_color="#3a0ca3",    # hover tím đậm
+    font=("Arial", 14, "bold"),
+    command=solve
+)
+btn.pack(pady=20, padx=80, fill="x")
 
 app.mainloop()
