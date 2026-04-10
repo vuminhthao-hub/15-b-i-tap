@@ -1,91 +1,44 @@
-import customtkinter as ctk
+import tkinter as tk
 
-ctk.set_appearance_mode("dark")
-
-app = ctk.CTk()
-app.title("UCLN & BCNN")
-app.geometry("420x400")
-
-# ===== FRAME CHÍNH =====
-frame = ctk.CTkFrame(
-    app,
-    corner_radius=20,
-    fg_color="#1e1e2f"   # màu nền chính
-)
-frame.pack(padx=20, pady=20, fill="both", expand=True)
-
-# ===== TITLE =====
-title = ctk.CTkLabel(
-    frame,
-    text="TÍNH UCLN & BCNN",
-    font=("Arial", 20, "bold"),
-    text_color="#4cc9f0"   # xanh neon
-)
-title.pack(pady=20)
-
-# ===== INPUT =====
-e1 = ctk.CTkEntry(
-    frame,
-    placeholder_text="Nhập số a",
-    height=45,
-    corner_radius=10,
-    border_color="#4cc9f0"
-)
-e1.pack(pady=10, padx=30, fill="x")
-
-e2 = ctk.CTkEntry(
-    frame,
-    placeholder_text="Nhập số b",
-    height=45,
-    corner_radius=10,
-    border_color="#4cc9f0"
-)
-e2.pack(pady=10, padx=30, fill="x")
-
-# ===== RESULT =====
-kq = ctk.CTkLabel(
-    frame,
-    text="",
-    font=("Arial", 16),
-    text_color="#f1faee"
-)
-kq.pack(pady=15)
-
-# ===== LOGIC =====
-def gcd(a, b):
-    while b != 0:
-        a, b = b, a % b
-    return a
-
-def solve():
+def tinh_m():
     try:
-        a = int(e1.get())
-        b = int(e2.get())
+        n = int(entry.get())
 
-        ucln = gcd(a, b)
-        bcnn = abs(a * b) // ucln if ucln != 0 else 0
+        if n <= 0:
+            result.config(text="❌ Nhập số nguyên dương!", fg="red")
+            return
 
-        kq.configure(
-            text=f"UCLN: {ucln}\nBCNN: {bcnn}",
-            text_color="#80ed99"  # xanh lá khi thành công
+        tong = 0
+        m = 0
+
+        while tong + (m + 1) < n:
+            m += 1
+            tong += m
+
+        result.config(
+            text=f"m = {m}\nTổng = {tong} < {n}",
+            fg="green"
         )
+
     except:
-        kq.configure(
-            text="❌ Nhập sai!",
-            text_color="#ff4d6d"  # đỏ lỗi
-        )
+        result.config(text="❌ Nhập sai định dạng!", fg="red")
 
-# ===== BUTTON =====
-btn = ctk.CTkButton(
-    frame,
-    text="TÍNH",
-    height=50,
-    corner_radius=12,
-    fg_color="#4361ee",       # xanh chính
-    hover_color="#3a0ca3",    # hover tím đậm
-    font=("Arial", 14, "bold"),
-    command=solve
-)
-btn.pack(pady=20, padx=80, fill="x")
 
-app.mainloop()
+# ===== GIAO DIỆN =====
+root = tk.Tk()
+root.title("Tìm m lớn nhất")
+root.geometry("300x200")
+
+label = tk.Label(root, text="Nhập n:", font=("Arial", 12))
+label.pack(pady=5)
+
+entry = tk.Entry(root, font=("Arial", 12))
+entry.pack(pady=5)
+
+btn = tk.Button(root, text="Tính", command=tinh_m)
+btn.pack(pady=10)
+
+result = tk.Label(root, text="", font=("Arial", 12))
+result.pack(pady=10)
+
+root.mainloop()
