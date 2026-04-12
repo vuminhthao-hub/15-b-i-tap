@@ -1,79 +1,86 @@
 import tkinter as tk
+import random
 
-# ===== TÍNH PARITY =====
-def tinh_parity(event=None):
-    value = entry.get()
+# ===== HÀM TẠO MA TRẬN =====
+def tao_ma_tran():
+    for widget in frame_kq.winfo_children():
+        widget.destroy()
 
-    if not value.isdigit():
-        result.config(text="❌ Nhập số hợp lệ!", fg="red")
+    try:
+        n = int(entry_n.get())
+    except:
+        tk.Label(frame_kq, text="❌ Nhập số hợp lệ!", fg="red").pack()
         return
 
-    n = int(value)
-    binary = bin(n)[2:]
-    count1 = binary.count("1")
-    parity = 0 if count1 % 2 == 0 else 1
+    # ===== TẠO MA TRẬN A =====
+    A = [[random.randint(-10, 10) for _ in range(n)] for _ in range(n)]
 
-    # hiển thị text
-    result.config(
-        text=f"Nhị phân: {binary}\nSố bit 1: {count1}\n➡ Even parity = {parity}",
-        fg="#00ffcc"
-    )
+    # ===== TÍNH MA TRẬN B =====
+    B = [[0]*n for _ in range(n)]
 
-    # ===== VẼ ĐỒ HỌA =====
-    canvas.delete("all")
+    for i in range(n):
+        for j in range(n):
+            tong_cheo_chinh = 0
+            tong_cheo_phu = 0
 
-    x = 20
-    for bit in binary:
-        color = "#22c55e" if bit == "1" else "#1e293b"
+            for k in range(n):
+                for l in range(n):
+                    if k - l == i - j:   # chéo chính
+                        tong_cheo_chinh += A[k][l]
+                    if k + l == i + j:   # chéo phụ
+                        tong_cheo_phu += A[k][l]
 
-        # ô vuông
-        canvas.create_rectangle(x, 50, x+30, 80, fill=color, outline="white")
+            B[i][j] = tong_cheo_chinh + tong_cheo_phu - 2*A[i][j]
 
-        # chữ 0/1
-        canvas.create_text(x+15, 65, text=bit, fill="white")
+    # ===== HIỂN THỊ MA TRẬN A =====
+    tk.Label(frame_kq, text="Ma trận A", fg="blue",
+             font=("Arial", 13, "bold")).grid(row=0, column=0, columnspan=n)
 
-        x += 40
+    for i in range(n):
+        for j in range(n):
+            tk.Label(frame_kq, text=A[i][j],
+                     bg="#d0ebff", width=5, height=2,
+                     relief="ridge", borderwidth=2)\
+                .grid(row=i+1, column=j, padx=2, pady=2)
 
-    # vẽ parity
-    canvas.create_text(200, 120,
-        text=f"Parity = {parity}",
-        fill="#ff66cc", font=("Arial", 12, "bold"))
+    # ===== HIỂN THỊ MA TRẬN B =====
+    start = n + 2
+
+    tk.Label(frame_kq, text="Ma trận B", fg="green",
+             font=("Arial", 13, "bold")).grid(row=start, column=0, columnspan=n)
+
+    for i in range(n):
+        for j in range(n):
+            tk.Label(frame_kq, text=B[i][j],
+                     bg="#ffe0b2", width=5, height=2,
+                     relief="ridge", borderwidth=2)\
+                .grid(row=start+i+1, column=j, padx=2, pady=2)
 
 # ===== GIAO DIỆN =====
 root = tk.Tk()
-root.title("🎮 Bit Parity Visual")
-root.geometry("450x300")
-root.configure(bg="#020617")
+root.title("Ma trận A và B")
+root.geometry("360x500")
+root.configure(bg="#f5f5f5")
 
-# ===== TITLE =====
-tk.Label(root, text="⚡ BIT PARITY VISUAL ⚡",
-         font=("Arial", 15, "bold"),
-         fg="#38bdf8", bg="#020617").pack(pady=10)
+tk.Label(root, text="CHƯƠNG TRÌNH MA TRẬN",
+         font=("Arial", 14, "bold"),
+         bg="#f5f5f5").pack(pady=10)
 
-# ===== INPUT =====
-frame = tk.Frame(root, bg="#020617")
-frame.pack()
+frame_input = tk.Frame(root, bg="#f5f5f5")
+frame_input.pack()
 
-entry = tk.Entry(frame, font=("Arial", 12),
-                 bg="black", fg="white",
-                 insertbackground="white", width=20)
-entry.pack(side=tk.LEFT, padx=5)
+tk.Label(frame_input, text="Nhập bậc n:",
+         bg="#f5f5f5").grid(row=0, column=0)
 
-entry.bind("<Return>", tinh_parity)
+entry_n = tk.Entry(frame_input, width=10)
+entry_n.grid(row=0, column=1)
 
-tk.Button(frame, text="Tính",
-          bg="#22c55e", fg="white",
-          command=tinh_parity).pack(side=tk.LEFT)
+tk.Button(root, text="Tạo ma trận",
+          bg="#4CAF50", fg="white",
+          font=("Arial", 10, "bold"),
+          command=tao_ma_tran).pack(pady=10)
 
-# ===== RESULT =====
-result = tk.Label(root, text="👉 Kết quả",
-                  fg="#94a3b8", bg="#020617",
-                  font=("Consolas", 11))
-result.pack(pady=10)
+frame_kq = tk.Frame(root, bg="#f5f5f5")
+frame_kq.pack()
 
-# ===== CANVAS ĐỒ HỌA =====
-canvas = tk.Canvas(root, width=420, height=150, bg="#020617", highlightthickness=0)
-canvas.pack()
-
-entry.focus()
 root.mainloop()
