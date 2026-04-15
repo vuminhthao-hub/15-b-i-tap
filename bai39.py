@@ -1,0 +1,80 @@
+import tkinter as tk
+
+# ===== HÀM XỬ LÝ =====
+def tim_bo():
+    result_box.delete(1.0, tk.END)
+
+    for a in range(1, 100):
+        for b in range(a+1, 100):
+            for c in range(b+1, 100):
+                if a*a + b*b == c*c:
+
+                    if b == a+1 and c == b+1:
+                        result_box.insert(tk.END, f"({a}, {b}, {c}) - Liên tiếp\n", "lientiep")
+
+                    elif a%2==0 and b%2==0 and c%2==0 and b==a+2 and c==b+2:
+                        result_box.insert(tk.END, f"({a}, {b}, {c}) - Chẵn liên tiếp\n", "chan")
+
+
+# ===== GIAO DIỆN =====
+root = tk.Tk()
+root.title("🌈 Pythagore Color App")
+root.geometry("540x420")
+
+# ===== NỀN GRADIENT (fake) =====
+bg = tk.Frame(root, bg="#6a11cb")
+bg.pack(fill="both", expand=True)
+
+card = tk.Frame(bg, bg="white")
+card.place(relx=0.5, rely=0.5, anchor="center", width=480, height=360)
+
+# ===== TIÊU ĐỀ =====
+title = tk.Label(card,
+                 text="🎨 Pythagore Finder",
+                 font=("Segoe UI", 16, "bold"),
+                 bg="white", fg="#6a11cb")
+title.pack(pady=10)
+
+# ===== NÚT =====
+btn = tk.Button(card,
+                text=" TÌM NGAY",
+                command=tim_bo,
+                font=("Segoe UI", 11, "bold"),
+                bg="#ff7a18",
+                fg="white",
+                activebackground="#ff5200",
+                relief="flat",
+                padx=15,
+                pady=5)
+btn.pack(pady=10)
+
+# ===== TEXT + SCROLL =====
+frame_text = tk.Frame(card, bg="white")
+frame_text.pack()
+
+scroll = tk.Scrollbar(frame_text)
+scroll.pack(side="right", fill="y")
+
+result_box = tk.Text(frame_text,
+                     height=13,
+                     width=50,
+                     font=("Consolas", 10),
+                     bg="#f9f9f9",
+                     fg="#333",
+                     yscrollcommand=scroll.set)
+
+result_box.pack()
+scroll.config(command=result_box.yview)
+
+# ===== TÔ MÀU KẾT QUẢ =====
+result_box.tag_config("lientiep", foreground="#0099ff")   # xanh
+result_box.tag_config("chan", foreground="#ff4081")       # hồng
+
+# ===== FOOTER =====
+footer = tk.Label(card,
+                  text="✨ Color UI Version",
+                  font=("Segoe UI", 9),
+                  bg="white", fg="#aaa")
+footer.pack(side="bottom", pady=5)
+
+root.mainloop()
