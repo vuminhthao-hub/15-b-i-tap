@@ -1,118 +1,87 @@
 import tkinter as tk
-import random
+import math
 
 # ===== HÀM XỬ LÝ =====
 def xu_ly():
-    result_box.delete(1.0, tk.END)
+    result_label.config(text="", fg="black")
 
     try:
-        n = int(entry_n.get())
-        m = int(entry_m.get())
-        if n <= 0 or m <= 0:
-            result_box.insert(tk.END, "❌ n, m phải > 0\n")
-            return
+        a = float(entry_a.get())
+        b = float(entry_b.get())
+        c = float(entry_c.get())
+
+        if a <= 0 or b <= 0 or c <= 0:
+            raise ValueError
     except:
-        result_box.insert(tk.END, "❌ Nhập n, m hợp lệ!\n")
+        result_label.config(text="❌ Nhập số hợp lệ!", fg="red")
         return
 
-    # tạo ma trận random [-100,100]
-    A = [[random.randint(-100, 100) for _ in range(m)] for _ in range(n)]
+    # ===== KIỂM TRA TAM GIÁC =====
+    if a + b <= c or a + c <= b or b + c <= a:
+        result_label.config(text="❌ Không phải tam giác!", fg="red")
+        return
 
-    # in ma trận A
-    result_box.insert(tk.END, "👉 Ma trận A:\n", "title")
-    for i in range(n):
-        for j in range(m):
-            color = random.choice(colors)
-            result_box.insert(tk.END, f"{A[i][j]:4}", color)
-        result_box.insert(tk.END, "\n")
+    # ===== XÁC ĐỊNH LOẠI TAM GIÁC =====
+    if a == b == c:
+        loai = "Tam giác đều"
+    elif a == b or b == c or a == c:
+        loai = "Tam giác cân"
+    elif abs(a*a + b*b - c*c) < 1e-6 or \
+         abs(a*a + c*c - b*b) < 1e-6 or \
+         abs(b*b + c*c - a*a) < 1e-6:
+        loai = "Tam giác vuông"
+    else:
+        loai = "Tam giác thường"
 
-    # tạo ma trận B
-    B = [[0]*m for _ in range(n)]
+    # ===== TÍNH DIỆN TÍCH (HERON) =====
+    p = (a + b + c) / 2
+    S = math.sqrt(p * (p - a) * (p - b) * (p - c))
 
-    # kiểm tra cực tiểu
-    for i in range(n):
-        for j in range(m):
-            is_min = True
-
-            for x in range(i-1, i+2):
-                for y in range(j-1, j+2):
-                    if 0 <= x < n and 0 <= y < m:
-                        if (x != i or y != j) and A[x][y] <= A[i][j]:
-                            is_min = False
-
-            if is_min:
-                B[i][j] = 1
-
-    # in ma trận B
-    result_box.insert(tk.END, "\n👉 Ma trận cực tiểu:\n", "title")
-    for i in range(n):
-        for j in range(m):
-            if B[i][j] == 1:
-                result_box.insert(tk.END, f"{B[i][j]:4}", "min")
-            else:
-                result_box.insert(tk.END, f"{B[i][j]:4}", "zero")
-        result_box.insert(tk.END, "\n")
-
+    # ===== HIỂN THỊ =====
+    result_label.config(
+        text=f"{loai}\nDiện tích S = {S:.2f}",
+        fg="green"
+    )
 
 # ===== GIAO DIỆN =====
 root = tk.Tk()
-root.title("🌈 Matrix Min Finder")
-root.geometry("560x460")
+root.title("Tam giác")
+root.geometry("350x300")
+root.configure(bg="#f5f5f5")
 
-bg = tk.Frame(root, bg="#141e30")
-bg.pack(fill="both", expand=True)
+tk.Label(root,
+         text="KIỂM TRA TAM GIÁC",
+         font=("Arial", 14, "bold"),
+         bg="#f5f5f5").pack(pady=10)
 
-card = tk.Frame(bg, bg="white")
-card.place(relx=0.5, rely=0.5, anchor="center", width=500, height=400)
-
-# tiêu đề
-tk.Label(card,
-         text="🎨 MA TRẬN CỰC TIỂU",
-         font=("Segoe UI", 16, "bold"),
-         bg="white", fg="#6a11cb").pack(pady=10)
-
-# nhập n m
-frame_input = tk.Frame(card, bg="white")
+frame_input = tk.Frame(root, bg="#f5f5f5")
 frame_input.pack()
 
-tk.Label(frame_input, text="n:", bg="white").pack(side="left")
-entry_n = tk.Entry(frame_input, width=5)
-entry_n.pack(side="left", padx=5)
+# nhập a
+tk.Label(frame_input, text="Cạnh a:", bg="#f5f5f5").grid(row=0, column=0)
+entry_a = tk.Entry(frame_input, width=10)
+entry_a.grid(row=0, column=1)
 
-tk.Label(frame_input, text="m:", bg="white").pack(side="left")
-entry_m = tk.Entry(frame_input, width=5)
-entry_m.pack(side="left", padx=5)
+# nhập b
+tk.Label(frame_input, text="Cạnh b:", bg="#f5f5f5").grid(row=1, column=0)
+entry_b = tk.Entry(frame_input, width=10)
+entry_b.grid(row=1, column=1)
+
+# nhập c
+tk.Label(frame_input, text="Cạnh c:", bg="#f5f5f5").grid(row=2, column=0)
+entry_c = tk.Entry(frame_input, width=10)
+entry_c.grid(row=2, column=1)
 
 # nút
-tk.Button(card,
-          text="🚀 TẠO MA TRẬN",
-          command=xu_ly,
-          bg="#ff7a18",
+tk.Button(root,
+          text="Kiểm tra",
+          bg="#4CAF50",
           fg="white",
-          font=("Segoe UI", 11, "bold"),
-          relief="flat").pack(pady=10)
+          font=("Arial", 10, "bold"),
+          command=xu_ly).pack(pady=10)
 
-# text box
-result_box = tk.Text(card,
-                     height=15,
-                     width=55,
-                     font=("Consolas", 11),
-                     bg="#f4f4f4")
-result_box.pack()
-
-# ===== MÀU =====
-colors = ["red", "blue", "green", "purple", "orange"]
-
-for c in colors:
-    result_box.tag_config(c, foreground=c)
-
-result_box.tag_config("title", foreground="#6a11cb", font=("Segoe UI", 11, "bold"))
-result_box.tag_config("min", foreground="#ff4081", font=("Consolas", 11, "bold"))
-result_box.tag_config("zero", foreground="#999")
-
-# footer
-tk.Label(card,
-         text="✨ Color Matrix Version",
-         bg="white", fg="gray").pack(side="bottom", pady=5)
+# kết quả
+result_label = tk.Label(root, text="", bg="#f5f5f5", font=("Arial", 12))
+result_label.pack()
 
 root.mainloop()
